@@ -5,7 +5,7 @@ var buf = new Buffer(256);
 var app = express.createServer(express.logger());
 
 app.get('/', function(request, response) {
-  response.send('Hello fs!');
+  response.send(buf);
 });
 
 var port = process.env.PORT || 5000;
