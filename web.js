@@ -5,11 +5,7 @@ var app = express.createServer(express.logger());
 var buf = new Buffer(256);
 
 app.get('/', function(request, response) {
-  buf.write(fs.readFile('index.html', function (err, data) {
-    if (err) throw err;
-    console.log(data);
-  });
-  response.send(res);
+  response.send('start again');
 
 }););
 
