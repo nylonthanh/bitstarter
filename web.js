@@ -1,11 +1,11 @@
 var express = require('express');
+var fs = require('fs');
 
 var app = express.createServer(express.logger());
-var fs = require('fs');
 var buf = new Buffer(256);
 
 app.get('/', function(request, response) {
-  var res = buf.write(fs.readFile('./index.html', function (err, data) {
+  buf.write(fs.readFile('index.html', function (err, data) {
     if (err) throw err;
     console.log(data);
   });
