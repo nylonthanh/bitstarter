@@ -34,7 +34,7 @@ var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
 var URLLOCATION_DEFAULT = "http://polar-hollows-9719.herokuapp.com";
 
-  var callThis = function(result) {
+var callThis = function(result) {
 if (data instanceof Error) {
     sys.puts('Error: ' + result.message);
     this.retry(5000); // try again after 5 sec
@@ -44,10 +44,7 @@ if (data instanceof Error) {
 };
 
 var assertFileExists = function(infile) {
-console.log('assertFileExists is being called');
     var instr = infile.toString();
-console.log('instr =' + instr);
-console.log('!fs.existsSync(instr) =' + !fs.existsSync(instr));
     if(!fs.existsSync(instr)) {
         console.log("%s does not exist. Exiting.", instr);
         process.exit(1); // http://nodejs.org/api/process.html#process_process_exit_code
@@ -56,7 +53,6 @@ console.log('!fs.existsSync(instr) =' + !fs.existsSync(instr));
 };
 
 var assertURLExists = function(url) {
-console.log('assertURLExists is being called');
     var inURL = url.toString();
         rest.get(url).on('complete', function(result) {
           if(result instanceof Error) {
@@ -79,15 +75,9 @@ var loadChecks = function(checksfile) {
     return JSON.parse(fs.readFileSync(checksfile));
 };
 
-var checkURLlink = function(htmlfile, checksfile) {
-    $ = cheerioHtmlFile(htmlfile);
-    var checks = loadChecks(checksfile).sort();
-    var out = {}; 
-    for(var ii in checks) {
-        var present = $(checks[ii]).length > 0;
-        out[checks[ii]] = present;
-    }   
-    return out;
+var checkURLlink = function(url, checksfile) {
+    var inURL = url.toString();
+        //rest.get(url);
 };
 
 var checkHtmlFile = function(htmlfile, checksfile) {
@@ -112,36 +102,20 @@ if(require.main == module) {
     program
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-        .option('-u, --url <url_location>', 'Path to the URL', clone(assertURLExists), URLLOCATION_DEFAULT)
+        .option('-u, --url ', 'Path to the URL', clone(assertURLExists), URLLOCATION_DEFAULT)
         .parse(process.argv);
+        //.option('-u, --url <url>', 'Path to the URL', clone(assertURLExists), URLLOCATION_DEFAULT)
+console.log('program.url = ' + program.url);
+console.log('program.checks= ' + program.checks);
 
-if(program.url){
-    rest.get(program.url).on('complete', checkURLLink(program.url, program.checks)); 
-console.log('program.url');
-}
-else {
-console.log('program.file=' + program.file);
-console.log('else url=' + program.url);
-    exports.checkHtmlFile = checkHtmlFile;
-}
-/*
-    if(program.file) {
-console.log('if');
-    var checkJson = checkHtmlFile(program.file, program.checks);
-console.log('co');
-    var outJson = JSON.stringify(checkJson, null, 4);
-    console.log(outJson);
+    if(program.url){
+        rest.get(program.url).on('complete', checkURLlink(program.url, program.checks)); 
     }
     else {
-console.log('else');
-console.log('program.file=' + program.file);
-console.log('program.checks=' + program.checks);
     var checkJson = checkHtmlFile(program.file, program.checks);
     var outJson = JSON.stringify(checkJson, null, 4);
     console.log(outJson);
     }
-*/
 } else {
-console.log('exporting');
     exports.checkHtmlFile = checkHtmlFile;
 }
