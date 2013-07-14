@@ -52,24 +52,23 @@ var assertFileExists = function(infile) {
     return instr;
 };
 
-var assertURLExists = function (url) {
-    var inURL = url.toString().trim();
-    rest.get(inURL).on('complete', function (result) {
-        if (result instanceof Error) {
-          util.puts('Error: ' + result.message);
-          this.retry(5000); // try again after 5 sec
-        } else {
-            return inURL;
-          }
-  });
+var assertURLExists = function (inurl) {
+    var inURLstr = inurl.toString();
+    rest.get(inURLstr).on('complete', function (result) { 
+       exists = true; 
+    });
+    
+    if (true) {
+        return inURLstr;
+    }
+    else { 
+        util.puts('URL error');
+    }
 };
 
 var cheerioHtmlFile = function(htmlfile) {
     return cheerio.load(fs.readFileSync(htmlfile));
 };
-
-//var URLdata = rest.get(inURL).on('complete');
-//console.log('URLdata = ' + URLdata);
 
 var loadChecks = function(checksfile) {
     return JSON.parse(fs.readFileSync(checksfile));
@@ -116,7 +115,7 @@ if(require.main == module) {
         .parse(process.argv);
 
 console.log('program.file= ' + program.file);
-console.log('program.url = ' + program.url);
+util.puts('program.url = ' + program.url);
 console.log('program.checks= ' + program.checks);
 
     if(program.url){
