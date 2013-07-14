@@ -75,18 +75,19 @@ var loadChecks = function(checksfile) {
 };
 
 var checkURLlink = function(url, checksfile) {
-    var inURL = url.toString().trim();
+    var inURL = url.toString();
     var checks = loadChecks(checksfile).sort();
     var URLout = {};
-/*
+
+    rest.get(inURL).on('complete', function (result) {
+        var URLcontent = result;
+console.log(URLcontent);
+    $ = cheerio.load(URLcontent); // load the URL content and process
     for(var i in checks) {
         var URLpresent = $(checks[i]).length > 0;
         URLout[checks[i]] = URLpresent;
     }
     return URLout;
-*/
-
-    //rest.get(url);
 };
 
 var checkHtmlFile = function(htmlfile, checksfile) {
