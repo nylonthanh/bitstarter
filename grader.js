@@ -36,10 +36,10 @@ var URLLOCATION_DEFAULT = "http://polar-hollows-9719.herokuapp.com";
 
 var callThis = function(result) {
 if (data instanceof Error) {
-    sys.puts('Error: ' + result.message);
+    util.puts('Error: ' + result.message);
     this.retry(5000); // try again after 5 sec
   } else {
-    sys.puts(result);
+    util.puts(result);
   }
 };
 
@@ -53,15 +53,16 @@ var assertFileExists = function(infile) {
 };
 
 var assertURLExists = function(url) {
-    var inURL = url.toString();
-        rest.get(url).on('complete', function(result) {
-          if(result instanceof Error) {
-              util.puts('Error: ' + result.message);
-              process.exit(2); // http://nodejs.org/api/process.html#process_process_exit_code
-          } else {
-            return(inURL);
-          }
-    });
+    var inURL = url.toString().trim();
+    rest.get(inURL).on('complete', function(result) {
+    if (result instanceof Error) {
+    //  util.puts('Error: ' + result.message);
+     // this.retry(5000); // try again after 5 sec
+    } else {
+      //util.puts(result);
+      util.puts(inURL);
+    }
+  });
 };
 
 var cheerioHtmlFile = function(htmlfile) {
@@ -101,10 +102,13 @@ var clone = function(fn) {
 if(require.main == module) {
     program
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
-        .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-        .option('-u, --url ', 'Path to the URL', clone(assertURLExists), URLLOCATION_DEFAULT)
+        .option('-c, --checks <checks_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
+        .option('-u, --url [value]', 'Path to the URL', 'http://www.google.com', URLLOCATION_DEFAULT)
         .parse(process.argv);
         //.option('-u, --url <url>', 'Path to the URL', clone(assertURLExists), URLLOCATION_DEFAULT)
+console.log('url exists ' + clone(assertURLExists("http://www.google.com")));
+//console.log(JSON.stringify(program, null, 4));
+console.log('program.file= ' + program.file);
 console.log('program.url = ' + program.url);
 console.log('program.checks= ' + program.checks);
 
