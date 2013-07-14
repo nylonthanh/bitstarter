@@ -52,16 +52,15 @@ var assertFileExists = function(infile) {
     return instr;
 };
 
-var assertURLExists = function(url) {
+var assertURLExists = function (url) {
     var inURL = url.toString().trim();
-    rest.get(inURL).on('complete', function(result) {
-    if (result instanceof Error) {
-    //  util.puts('Error: ' + result.message);
-     // this.retry(5000); // try again after 5 sec
-    } else {
-      //util.puts(result);
-      util.puts(inURL);
-    }
+    rest.get(inURL).on('complete', function (result) {
+        if (result instanceof Error) {
+          util.puts('Error: ' + result.message);
+          this.retry(5000); // try again after 5 sec
+        } else {
+            return inURL;
+          }
   });
 };
 
@@ -77,8 +76,18 @@ var loadChecks = function(checksfile) {
 };
 
 var checkURLlink = function(url, checksfile) {
-    var inURL = url.toString();
-        //rest.get(url);
+    var inURL = url.toString().trim();
+    var checks = loadChecks(checksfile).sort();
+    var URLout = {};
+/*
+    for(var i in checks) {
+        var URLpresent = $(checks[i]).length > 0;
+        URLout[checks[i]] = URLpresent;
+    }
+    return URLout;
+*/
+
+    //rest.get(url);
 };
 
 var checkHtmlFile = function(htmlfile, checksfile) {
@@ -103,22 +112,23 @@ if(require.main == module) {
     program
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
         .option('-c, --checks <checks_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-        .option('-u, --url [value]', 'Path to the URL', 'http://www.google.com', URLLOCATION_DEFAULT)
+        .option('-u, --url [value]', 'Path to the URL', clone(assertURLExists), URLLOCATION_DEFAULT)
         .parse(process.argv);
-        //.option('-u, --url <url>', 'Path to the URL', clone(assertURLExists), URLLOCATION_DEFAULT)
-console.log('url exists ' + clone(assertURLExists("http://www.google.com")));
-//console.log(JSON.stringify(program, null, 4));
+
 console.log('program.file= ' + program.file);
 console.log('program.url = ' + program.url);
 console.log('program.checks= ' + program.checks);
 
     if(program.url){
-        rest.get(program.url).on('complete', checkURLlink(program.url, program.checks)); 
+        rest.get(program.url).on('complete', function () {
+                checkURLlink(program.url, program.checks); 
+        });
+console.log('program.url passed');
     }
     else {
     var checkJson = checkHtmlFile(program.file, program.checks);
     var outJson = JSON.stringify(checkJson, null, 4);
-    console.log(outJson);
+    console.log('outJson = ' + outJson);
     }
 } else {
     exports.checkHtmlFile = checkHtmlFile;
