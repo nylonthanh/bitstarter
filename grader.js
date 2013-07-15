@@ -71,16 +71,15 @@ var checkURLlink = function(url, checksfile) {
     var URLout = {};
 
     rest.get(inURL).on('complete', function (result) {
-
         $ = cheerio.load(result); // load the URL content and process
         for(var i in checksURL) {
-//console.log('searching for checks[i] = ' + checks[i]);
             var URLpresent = $(checksURL[i]).length > 0;
-//console.log('found in markup = ' + $(checks[i]));
             URLout[checksURL[i]] = URLpresent;
         }
         console.log(URLout);
+        return URLout;
     });
+    
 };
 
 var checkHtmlFile = function(htmlfile, checksfile) {
@@ -91,7 +90,7 @@ var checkHtmlFile = function(htmlfile, checksfile) {
         var present = $(checks[ii]).length > 0;
         out[checks[ii]] = present;
     }
-console.log(out);
+    console.log(out);
     return out;
 };
 
