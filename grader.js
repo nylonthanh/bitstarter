@@ -67,19 +67,21 @@ var loadChecks = function(checksfile) {
 
 var checkURLlink = function(url, checksfile) {
     var inURL = url.toString();
-    var checks = loadChecks(checksfile).sort();
+    var checksURL = loadChecks(checksfile).sort();
     var URLout = {};
 
     rest.get(inURL).on('complete', function (result) {
-        var URLcontent = result;
-        $ = cheerio.load(URLcontent); // load the URL content and process
-    for(var i in checks) {
-        var URLpresent = $(checks[i]).length > 0;
-        URLout[checks[i]] = URLpresent;
-    }
-console.log(URLout);
-return URLout;
+
+        $ = cheerio.load(result); // load the URL content and process
+        for(var i in checksURL) {
+//console.log('searching for checks[i] = ' + checks[i]);
+            var URLpresent = $(checksURL[i]).length > 0;
+//console.log('found in markup = ' + $(checks[i]));
+            URLout[checksURL[i]] = URLpresent;
+        }
+        console.log(URLout);
     });
+console.log(p);
 };
 
 var checkHtmlFile = function(htmlfile, checksfile) {
@@ -122,6 +124,7 @@ console.log('************************');
         var outJson = JSON.stringify(checkJson, null, 4);
         console.log(outJson);
     }
+
 } else {
       exports.checkHtmlFile = checkHtmlFile;
-  }
+}
