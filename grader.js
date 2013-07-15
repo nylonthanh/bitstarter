@@ -34,15 +34,6 @@ var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
 var URLLOCATION_DEFAULT = "http://polar-hollows-9719.herokuapp.com";
 
-var callThis = function(result) {
-if (data instanceof Error) {
-    util.puts('Error: ' + result.message);
-    this.retry(5000); // try again after 5 sec
-  } else {
-    util.puts(result);
-  }
-};
-
 var assertFileExists = function(infile) {
     var instr = infile.toString();
     if(!fs.existsSync(instr)) {
@@ -81,13 +72,14 @@ var checkURLlink = function(url, checksfile) {
 
     rest.get(inURL).on('complete', function (result) {
         var URLcontent = result;
-console.log(URLcontent);
-    $ = cheerio.load(URLcontent); // load the URL content and process
+        $ = cheerio.load(URLcontent); // load the URL content and process
     for(var i in checks) {
         var URLpresent = $(checks[i]).length > 0;
         URLout[checks[i]] = URLpresent;
     }
-    return URLout;
+console.log(URLout);
+return URLout;
+    });
 };
 
 var checkHtmlFile = function(htmlfile, checksfile) {
@@ -98,6 +90,7 @@ var checkHtmlFile = function(htmlfile, checksfile) {
         var present = $(checks[ii]).length > 0;
         out[checks[ii]] = present;
     }
+console.log(out);
     return out;
 };
 
@@ -115,21 +108,20 @@ if(require.main == module) {
         .option('-u, --url [value]', 'Path to the URL', clone(assertURLExists), URLLOCATION_DEFAULT)
         .parse(process.argv);
 
-console.log('program.file= ' + program.file);
-util.puts('program.url = ' + program.url);
-console.log('program.checks= ' + program.checks);
-
+    //processing
+console.log('************************');
+console.log('program.file = ' + program.file);
+console.log('program.checks = ' + program.checks);
+console.log('program.url = ' + program.url);
+console.log('************************');
     if(program.url){
-        rest.get(program.url).on('complete', function () {
-                checkURLlink(program.url, program.checks); 
-        });
-console.log('program.url passed');
+        var outJsonUrl = JSON.stringify(checkURLlink(program.url, program.checks), null, 4);
     }
     else {
-    var checkJson = checkHtmlFile(program.file, program.checks);
-    var outJson = JSON.stringify(checkJson, null, 4);
-    console.log('outJson = ' + outJson);
+        var checkJson = checkHtmlFile(program.file, program.checks);
+        var outJson = JSON.stringify(checkJson, null, 4);
+        console.log(outJson);
     }
 } else {
-    exports.checkHtmlFile = checkHtmlFile;
-}
+      exports.checkHtmlFile = checkHtmlFile;
+  }
