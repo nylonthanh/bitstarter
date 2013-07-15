@@ -125,5 +125,5 @@ console.log('************************');
     }
 
 } else {
-      exports.checkHtmlFile = checkHtmlFile;
+      exports.checkURLlink= checkURLlink;
 }
