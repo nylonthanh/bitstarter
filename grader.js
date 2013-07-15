@@ -81,7 +81,6 @@ var checkURLlink = function(url, checksfile) {
         }
         console.log(URLout);
     });
-console.log(p);
 };
 
 var checkHtmlFile = function(htmlfile, checksfile) {
