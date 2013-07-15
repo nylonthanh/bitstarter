@@ -45,11 +45,8 @@ var assertFileExists = function(infile) {
 
 var assertURLExists = function (inurl) {
     var inURLstr = inurl.toString();
-    rest.get(inURLstr).on('complete', function (result) { 
-       exists = true; 
-    });
-    
-    if (true) {
+    var existData = rest.get(inURLstr).on('complete', function (results) { return results });
+    if (existData) {
         return inURLstr;
     }
     else { 
@@ -85,7 +82,6 @@ var checkHtmlFile = function(htmlfile, checksfile) {
         var present = $(checks[ii]).length > 0;
         out[checks[ii]] = present;
     }
-    console.log(out);
     return out;
 };
 
@@ -99,11 +95,10 @@ var clone = function(fn) {
 
 if(require.main == module) {
     program
-        .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
-        .option('-c, --checks <checks_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
-        .option('-u, --url [value]', 'Path to the URL')
+        .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists) )
+        .option('-c, --checks <checks_file>', 'Path to checks.json', clone(assertFileExists) )
+        .option('-u, --url <value>', 'Path to the URL')
         .parse(process.argv);
-
     //processing
 console.log('************************');
 console.log('program.file = ' + program.file);
@@ -117,12 +112,13 @@ console.log('************************');
             console.log(outJsonUrl);
         });
     }
-    else {
+    else if (program.url !== 'export'){
         var checkJson = checkHtmlFile(program.file, program.checks);
         var outJson = JSON.stringify(checkJson, null, 4);
         console.log(outJson);
     }
-
-} else {
+    else {
+      console.log('Exporting...');
       exports.checkURLlink= checkURLlink;
-}
+    }
+} 
